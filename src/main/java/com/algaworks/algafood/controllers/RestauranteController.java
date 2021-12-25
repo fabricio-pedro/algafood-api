@@ -25,18 +25,22 @@ import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontrada;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.util.logging.Logger;
 @RestController
 @RequestMapping("restaurantes")
 public class RestauranteController {
 
+ 	
+	
  @Autowired	
  private CadastroRestauranteService cadastroRestaurante;	
 
  @GetMapping
  public ResponseEntity<List<Restaurante>> Listar(){
-	 
-	 return ResponseEntity.ok(this.cadastroRestaurante.listar());
+	     List<Restaurante> restaurantes=this.cadastroRestaurante.listar();
+	     System.err.println("Cozinha do restaurante "+restaurantes.get(0).getCozinha().getNome());
+	     System.err.println("Cozinha do restaurante "+restaurantes.get(1).getCozinha().getNome());
+	 return ResponseEntity.ok(restaurantes);
 	 
  }	
  @GetMapping("/{id}")
