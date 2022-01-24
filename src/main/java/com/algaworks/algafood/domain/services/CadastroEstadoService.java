@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontrada;
+import com.algaworks.algafood.domain.exceptions.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repositories.EstadoRepository;
 
@@ -30,7 +30,7 @@ public class CadastroEstadoService {
 			this.estadoRepository.deleteById(id);
 		}
 		catch(EmptyResultDataAccessException ex) {
-			throw new EntidadeNaoEncontrada(String.format("Estado com codigo %s não encontrado",id));
+			throw new EstadoNaoEncontradoException(id);
 		}
 		catch(DataIntegrityViolationException ex) {
 		  throw new EntidadeEmUsoException(String.format("estado com código: %s nao pode ser removida pois esta em uso", id));	
@@ -42,7 +42,7 @@ public class CadastroEstadoService {
 	}
 	public Estado buscarPor(Long id) {
 	  Estado estado = this.estadoRepository
-			 .findById(id).orElseThrow(()-> new EntidadeNaoEncontrada(String.format("Estado com código %s não encontrado", id)));
+			 .findById(id).orElseThrow(()-> new EstadoNaoEncontradoException(id));
 	 return estado;	
 	}
 	

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontrada;
+import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.services.CadastroEstadoService;
 
@@ -36,7 +36,7 @@ public class EstadoController {
        try {
     	 var estadoEncontrado = this.cadastroEstado.buscarPor(id);
     	 return ResponseEntity.ok(estadoEncontrado);
-       }catch(EntidadeNaoEncontrada ex) {
+       }catch(EntidadeNaoEncontradaException ex) {
     	   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
        }
 	
@@ -46,7 +46,7 @@ public class EstadoController {
 		try {
 			this.cadastroEstado.excluir(id);
 			return ResponseEntity.noContent().build();
-		}catch(EntidadeNaoEncontrada ex) {
+		}catch(EntidadeNaoEncontradaException ex) {
 			return ResponseEntity.notFound().build();
 		}catch(EntidadeEmUsoException ex) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
