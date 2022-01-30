@@ -3,6 +3,8 @@ package com.algaworks.algafood.controllers;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.algaworks.algafood.api.model.CozinhaXmlWrapper;
+import com.algaworks.algafood.api.xmlsExample.CozinhaXmlWrapper;
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cozinha;
@@ -57,7 +59,7 @@ public class CozinhaController {
 	
 	
 	@PostMapping
-    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha){
+    public ResponseEntity<Cozinha> adicionar(@RequestBody @Valid Cozinha cozinha){
 		var novaCozinha = this.cadastroCozinha.salvar(cozinha);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				  .path("/{id}").buildAndExpand(novaCozinha.getId())

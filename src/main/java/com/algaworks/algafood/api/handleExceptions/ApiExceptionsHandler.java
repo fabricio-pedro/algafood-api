@@ -1,7 +1,9 @@
 package com.algaworks.algafood.api.handleExceptions;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -10,6 +12,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -18,6 +23,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.algaworks.algafood.api.handleExceptions.ProblemDetails.Field;
 import com.algaworks.algafood.api.handleExceptions.ProblemDetails.ProblemDetailsBuilder;
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontradaException;
@@ -31,12 +37,19 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 @RestControllerAdvice
 public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 	
+	private static final String MSG_ERROR_GENERICA_USUARIO_FINAL="Ocorreu um error interno inesperado no sistema."+
+	                                                "Tente novamente e caso problema persistir entre em contato com o "+
+			                                        "administrador do sistema";
+	
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<?> handleRestauranteNaoEncontradoException(EntidadeNaoEncontradaException ex,WebRequest request){
 	     
 		int status=HttpStatus.NOT_FOUND.value();
 		
-		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.RECURSO_NAO_ENCONTRADO).build();
+		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.RECURSO_NAO_ENCONTRADO)
+				                     .userMessage(ex.getLocalizedMessage())
+				                     .timestamp(LocalDateTime.now())
+				                     .build();
 		
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 		
@@ -45,7 +58,9 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> handleNegocioException(NegocioException ex,WebRequest request){
      
         int status=HttpStatus.BAD_REQUEST.value();
-		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.ERRO_DE_NEGOCIO).build();
+		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.ERRO_DE_NEGOCIO)
+				                      .timestamp(LocalDateTime.now())
+				                      .build();
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 		
 	}
@@ -53,7 +68,9 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> handleEntidadeEmUsoException(EntidadeEmUsoException ex,WebRequest request){
 		  
 			
-			ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.CONFLICT.value(), ex.getMessage(),ProblemType.ENTIDADE_EM_USO).build();
+			ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.CONFLICT.value(), ex.getMessage(),ProblemType.ENTIDADE_EM_USO)
+					                      .userMessage(ex.getMessage())
+					                      .timestamp(LocalDateTime.now()).build();
 			   
 			return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.CONFLICT, request);
 	}
@@ -65,8 +82,9 @@ protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object bo
 	  if(body==null) {
 		body=ProblemDetails.builder()
 			  .details(status.getReasonPhrase())
-			 .status(status.value())
-			 .build();  
+			  .status(status.value())
+			  .timestamp(LocalDateTime.now())
+			  .build();  
 		  
 	  }
 	  
@@ -88,12 +106,12 @@ protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object bo
 private ResponseEntity<Object> handleMethMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request){
 	ProblemType typeOfProblem=ProblemType.PARAMETRO_INVALIDO;
 	URI uri= ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-	System.out.println();
 	String parameter=ex.getParameter().getParameterName();
 	String value=ex.getValue().toString();
 	String typeExpected=ex.getRequiredType().getSimpleName();
 	String details=String.format("A URL  com parametro '%s' recebeu o valor '%s', que é invalido, informe umm valor do tipo '%s'",parameter,value,typeExpected);
-	ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem).build();
+	ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
+			                .timestamp(LocalDateTime.now()).build();
 	return handleExceptionInternal(ex, problems, headers, status, request); 
 }
  
@@ -110,7 +128,9 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
          }
 	  
 	     String details="Erro de sintaxe no corpo  da mensagem, verifique o formato";
-		ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.BAD_REQUEST.value(),details,ProblemType.ERRO_FORMATO_INCOMPREENSIVEL).build();
+		ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.BAD_REQUEST.value(),details,ProblemType.ERRO_FORMATO_INCOMPREENSIVEL)
+				                      .timestamp(LocalDateTime.now())
+				                      .userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	 
 	
@@ -121,12 +141,32 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
 
 	      String resource = ex.getRequestURL();
 	      String details=String.format("O recurso '%s' que você tentou acessar é inexistente, tente outro",resource);
-	      ProblemDetails problems=createProblemDetailsBuilder(status.value(),details, ProblemType.RECURSO_NAO_ENCONTRADO).build();
+	      ProblemDetails problems=createProblemDetailsBuilder(status.value(),details, ProblemType.RECURSO_NAO_ENCONTRADO)
+	    		                  .timestamp(LocalDateTime.now())
+	    		                  .build();
 	 
 		return handleExceptionInternal(ex, problems,headers, status, request);
 	}
  
-
+ protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+            ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;
+            String details="Um ou mais campos estão invalidos.Faça o preenchimento e tente novamente";
+            BindingResult bindingResult=ex.getBindingResult();
+            List<ProblemDetails.Field> problemsInFields=bindingResult.getFieldErrors().stream()
+            		                                    .map(fieldError-> Field.builder().name(fieldError.getField())
+            		                                    		                        .errorInField(fieldError.getDefaultMessage())
+            		                                    		                        .build())
+            		                                    .collect(Collectors.toList());
+            
+            ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
+            		                .timestamp(LocalDateTime.now())
+                                    .userMessage(details)
+                                    .fields(problemsInFields)
+            		                .build();
+            		
+		return handleExceptionInternal(ex, problems, headers, status, request);
+	} 
  
 	
 private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex,
@@ -135,7 +175,9 @@ private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex,
 	    ProblemType typeOfProblem=ProblemType.ERRO_FORMATO_INCOMPREENSIVEL;
 	    String details=String.format("A propriedade '%s' recebeu valor '%s', que é um tipo inválido, "
 	    		+ "informe um valor do tipo 'Long' ", field,ex.getValue(), ex.getTargetType().getSimpleName());
-	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem).build();
+	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
+	    		                .timestamp(LocalDateTime.now()) 
+	    		                .userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 	
 	   return handleExceptionInternal(ex, problems, new HttpHeaders(), HttpStatus.BAD_REQUEST, request) ;
 }
@@ -145,10 +187,13 @@ private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex
 	    String field= joinPath(ex.getPath()); 
 	    String details=String.format("A propriedade '%s' não existe, corrija ou remova e tente novamente", field);  
 	    ProblemType typeOfProblem=ProblemType.ERRO_FORMATO_INCOMPREENSIVEL;
-	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem).build();
+	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
+	    		.timestamp(LocalDateTime.now())
+	    		.userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 	
 	return  handleExceptionInternal(ex, problems, headers, status, request);
 } 
+
 
 private String joinPath(List<Reference> references) {
     return references.stream()

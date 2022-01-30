@@ -16,6 +16,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -35,9 +37,10 @@ public class Restaurante {
 	private String nome;
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
-
+   
 	private LocalDateTime dataCadastro;
-
+    @NotNull
+    @Valid
 	@ManyToOne
 	@JoinColumn(name = "cozinha_id", nullable = false)
 	private Cozinha cozinha;
