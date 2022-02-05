@@ -27,9 +27,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.algaworks.algafood.core.validations.Groups;
-import com.algaworks.algafood.core.validations.TaxaFrete;
+import com.algaworks.algafood.core.validations.Multiplo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,7 +45,7 @@ public class Restaurante {
 	@NotBlank
 	@Column(length = 150)
 	private String nome;
-	@TaxaFrete
+	@PositiveOrZero
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
     
