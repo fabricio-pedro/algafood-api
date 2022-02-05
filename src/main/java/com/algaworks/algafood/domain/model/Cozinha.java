@@ -11,7 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
+import com.algaworks.algafood.core.validations.Groups;
+import com.algaworks.algafood.core.validations.Groups.CadastroCidadeId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -20,11 +23,13 @@ import lombok.Data;
 @Entity
 public class Cozinha {
 
- @Id @GeneratedValue(strategy = GenerationType.IDENTITY)	
+ @Id 
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @NotNull(groups = Groups.CadastroCidadeId.class)
  private Long id;
  
  @Column(length = 100)
- @NotBlank(message = "Campo nome é obrigatorio")
+ @NotBlank
  private String nome;
  @JsonIgnore
  @OneToMany(mappedBy = "cozinha")

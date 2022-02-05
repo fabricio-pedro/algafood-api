@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +43,8 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 	private static final String MSG_ERROR_GENERICA_USUARIO_FINAL="Ocorreu um error interno inesperado no sistema."+
 	                                                "Tente novamente e caso problema persistir entre em contato com o "+
 			                                        "administrador do sistema";
+	@Autowired
+	private MessageSource messageSource;
 	
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<?> handleRestauranteNaoEncontradoException(EntidadeNaoEncontradaException ex,WebRequest request){
@@ -153,16 +158,22 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
             ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;
             String details="Um ou mais campos estão invalidos.Faça o preenchimento e tente novamente";
             BindingResult bindingResult=ex.getBindingResult();
-            List<ProblemDetails.Field> problemsInFields=bindingResult.getFieldErrors().stream()
-            		                                    .map(fieldError-> Field.builder().name(fieldError.getField())
-            		                                    		                        .errorInField(fieldError.getDefaultMessage())
-            		                                    		                        .build())
-            		                                    .collect(Collectors.toList());
+            List<ProblemDetails.Field> problemFields = bindingResult.getFieldErrors().stream()
+    	    		.map(fieldError -> {
+    	    			String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+    	    			System.out.println("messagem:"+message);
+    	    			return ProblemDetails.Field.builder()
+    	    				.name(fieldError.getField())
+    	    				.errorInField(message)
+    	    				.build();
+    	    		})
+    	    		.collect(Collectors.toList());
+    	    
             
             ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
             		                .timestamp(LocalDateTime.now())
                                     .userMessage(details)
-                                    .fields(problemsInFields)
+                                    .fields(problemFields)
             		                .build();
             		
 		return handleExceptionInternal(ex, problems, headers, status, request);

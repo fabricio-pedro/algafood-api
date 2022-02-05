@@ -17,9 +17,19 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.algaworks.algafood.core.validations.Groups;
+import com.algaworks.algafood.core.validations.TaxaFrete;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,14 +43,25 @@ public class Restaurante {
 	@EqualsAndHashCode.Include
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	@NotBlank
 	@Column(length = 150)
 	private String nome;
+	@TaxaFrete
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
-   
+    
+	@JsonIgnore
+	@UpdateTimestamp
+	@Column(nullable = false, columnDefinition = "datetime")
+	private LocalDateTime dataAtualizacao;
+	
+	@JsonIgnore
+	@CreationTimestamp
+	@Column(nullable = false, columnDefinition = "datetime")
 	private LocalDateTime dataCadastro;
     @NotNull
     @Valid
+    @ConvertGroup(from=Default.class, to=Groups.CadastroCidadeId.class )
 	@ManyToOne
 	@JoinColumn(name = "cozinha_id", nullable = false)
 	private Cozinha cozinha;
@@ -54,7 +75,6 @@ public class Restaurante {
 
 	
 	  @ManyToMany
-	  
 	  @JoinTable(name = "restaurante_forma_pagamento", 
 	  joinColumns= @JoinColumn(name="restaurante_id"), 
 	  inverseJoinColumns = @JoinColumn(name="forma_pagamento_id")) 
