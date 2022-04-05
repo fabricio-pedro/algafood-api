@@ -2,6 +2,7 @@ package com.algaworks.algafood.api.handleExceptions;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 		
 		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.RECURSO_NAO_ENCONTRADO)
 				                     .userMessage(ex.getLocalizedMessage())
-				                     .timestamp(LocalDateTime.now())
+				                     .timestamp(OffsetDateTime.now())
 				                     .build();
 		
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
@@ -64,7 +65,7 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
      
         int status=HttpStatus.BAD_REQUEST.value();
 		ProblemDetails problemDetails=createProblemDetailsBuilder(status, ex.getMessage(),ProblemType.ERRO_DE_NEGOCIO)
-				                      .timestamp(LocalDateTime.now())
+				                      .timestamp(OffsetDateTime.now())
 				                      .build();
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 		
@@ -75,7 +76,7 @@ public class ApiExceptionsHandler extends ResponseEntityExceptionHandler {
 			
 			ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.CONFLICT.value(), ex.getMessage(),ProblemType.ENTIDADE_EM_USO)
 					                      .userMessage(ex.getMessage())
-					                      .timestamp(LocalDateTime.now()).build();
+					                      .timestamp(OffsetDateTime.now()).build();
 			   
 			return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.CONFLICT, request);
 	}
@@ -88,7 +89,7 @@ protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object bo
 		body=ProblemDetails.builder()
 			  .details(status.getReasonPhrase())
 			  .status(status.value())
-			  .timestamp(LocalDateTime.now())
+			  .timestamp(OffsetDateTime.now())
 			  .build();  
 		  
 	  }
@@ -116,7 +117,7 @@ private ResponseEntity<Object> handleMethMethodArgumentTypeMismatch(MethodArgume
 	String typeExpected=ex.getRequiredType().getSimpleName();
 	String details=String.format("A URL  com parametro '%s' recebeu o valor '%s', que é invalido, informe umm valor do tipo '%s'",parameter,value,typeExpected);
 	ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
-			                .timestamp(LocalDateTime.now()).build();
+			                .timestamp(OffsetDateTime.now()).build();
 	return handleExceptionInternal(ex, problems, headers, status, request); 
 }
  
@@ -134,7 +135,7 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
 	  
 	     String details="Erro de sintaxe no corpo  da mensagem, verifique o formato";
 		ProblemDetails problemDetails=createProblemDetailsBuilder(HttpStatus.BAD_REQUEST.value(),details,ProblemType.ERRO_FORMATO_INCOMPREENSIVEL)
-				                      .timestamp(LocalDateTime.now())
+				                      .timestamp(OffsetDateTime.now())
 				                      .userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 		return handleExceptionInternal(ex, problemDetails, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	 
@@ -147,7 +148,7 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
 	      String resource = ex.getRequestURL();
 	      String details=String.format("O recurso '%s' que você tentou acessar é inexistente, tente outro",resource);
 	      ProblemDetails problems=createProblemDetailsBuilder(status.value(),details, ProblemType.RECURSO_NAO_ENCONTRADO)
-	    		                  .timestamp(LocalDateTime.now())
+	    		                  .timestamp(OffsetDateTime.now())
 	    		                  .build();
 	 
 		return handleExceptionInternal(ex, problems,headers, status, request);
@@ -171,7 +172,7 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
     	    
             
             ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
-            		                .timestamp(LocalDateTime.now())
+            		                .timestamp(OffsetDateTime.now())
                                     .userMessage(details)
                                     .fields(problemFields)
             		                .build();
@@ -187,7 +188,7 @@ private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex,
 	    String details=String.format("A propriedade '%s' recebeu valor '%s', que é um tipo inválido, "
 	    		+ "informe um valor do tipo 'Long' ", field,ex.getValue(), ex.getTargetType().getSimpleName());
 	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
-	    		                .timestamp(LocalDateTime.now()) 
+	    		                .timestamp(OffsetDateTime.now()) 
 	    		                .userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 	
 	   return handleExceptionInternal(ex, problems, new HttpHeaders(), HttpStatus.BAD_REQUEST, request) ;
@@ -199,7 +200,7 @@ private ResponseEntity<Object> handlePropertyBinding(PropertyBindingException ex
 	    String details=String.format("A propriedade '%s' não existe, corrija ou remova e tente novamente", field);  
 	    ProblemType typeOfProblem=ProblemType.ERRO_FORMATO_INCOMPREENSIVEL;
 	    ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
-	    		.timestamp(LocalDateTime.now())
+	    		.timestamp(OffsetDateTime.now())
 	    		.userMessage(MSG_ERROR_GENERICA_USUARIO_FINAL).build();
 	
 	return  handleExceptionInternal(ex, problems, headers, status, request);

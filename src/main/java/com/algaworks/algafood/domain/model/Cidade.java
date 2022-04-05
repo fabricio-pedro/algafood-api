@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 @Data
@@ -24,6 +26,7 @@ private Long id;
 @Column(length = 100, nullable = false)
 @NotBlank(message = "Campo nome é obrigatorio")
 private String nome;
+
 
 @ManyToOne
 @JoinColumn(name = "estado_id",nullable = false)

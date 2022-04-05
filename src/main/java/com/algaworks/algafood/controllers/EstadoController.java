@@ -2,6 +2,8 @@ package com.algaworks.algafood.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,10 +11,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.io.creators.EstadoModelCreator;
+import com.algaworks.algafood.api.io.creators.EstadoResCreator;
+import com.algaworks.algafood.api.io.model.EstadoReq;
+import com.algaworks.algafood.api.io.model.EstadoRes;
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exceptions.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Estado;
@@ -23,35 +32,49 @@ import com.algaworks.algafood.domain.services.CadastroEstadoService;
 public class EstadoController {
 	
 	@Autowired
+	private EstadoResCreator estadoResCreator;
+	
+	@Autowired
+	private EstadoModelCreator estadoModelCreator;
+	
+	@Autowired
 	private CadastroEstadoService cadastroEstado;
     @GetMapping
-	public ResponseEntity<List<Estado>> listar(){
-    	 return ResponseEntity.ok(this.cadastroEstado.listar());
+	public List<EstadoRes> listar(){
+    	 var estados=this.estadoResCreator.toListModelRes(this.cadastroEstado.listar()); 
+    	return estados;
 		
 	}
 	
-	@ResponseStatus(value = HttpStatus.OK)
+	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> buscar(@PathVariable Long id) {
-       try {
+	public EstadoRes buscar(@PathVariable Long id) {
     	 var estadoEncontrado = this.cadastroEstado.buscarPor(id);
-    	 return ResponseEntity.ok(estadoEncontrado);
-       }catch(EntidadeNaoEncontradaException ex) {
-    	   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-       }
+    	 return this.estadoResCreator.toModelRes(estadoEncontrado);
+      
 	
 	}
 	@DeleteMapping("/{estado_id}")
-	public ResponseEntity<?> remover(@PathVariable(name = "estado_id") Long id){
-		try {
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable(name = "estado_id") Long id){
 			this.cadastroEstado.excluir(id);
-			return ResponseEntity.noContent().build();
-		}catch(EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}catch(EntidadeEmUsoException ex) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 			
-		}
+		
 	}
+	@PostMapping
+	public EstadoRes salvar(@RequestBody @Valid EstadoReq estadoReq) {
+		var estado=this.estadoModelCreator.toModelObject(estadoReq);
+		var estadoSalvo=this.cadastroEstado.salvar(estado);
+        return this.estadoResCreator.toModelRes(estadoSalvo);	
+	}
+	
+	@PutMapping("/{id}")
+	public EstadoRes alterar(@PathVariable Long id,@RequestBody @Valid EstadoReq estadoReq) {
+		 var estadoAtual=this.cadastroEstado.buscarPor(id);
+		 this.estadoModelCreator.copyToDomainObject(estadoReq, estadoAtual);
+		 var estadoAtualizado=this.cadastroEstado.salvar(estadoAtual);
+		 return this.estadoResCreator.toModelRes(estadoAtualizado);
+	}
+	
 
 }

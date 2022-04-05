@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exceptions.CozinhaNaoEncotradaException;
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
@@ -27,6 +28,7 @@ public class CadastroRestauranteService {
 		this.cozinhaRepository=cozinhaRepository;
 	}
 	
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		var cozinhaId=restaurante.getCozinha().getId();
 		 Optional<Cozinha> cozinhaOpt=this.cozinhaRepository.findById(cozinhaId);
@@ -35,6 +37,7 @@ public class CadastroRestauranteService {
 		 return this.restauranteRepository.save(restaurante);
 	}
 	
+	@Transactional
 	public void excluir(Long id) {
 		try {
 			this.restauranteRepository.deleteById(id);

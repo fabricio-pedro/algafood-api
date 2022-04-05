@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.algaworks.algafood.core.validations.Groups;
-import com.algaworks.algafood.core.validations.Groups.CadastroCidadeId;
+import com.algaworks.algafood.core.validations.Groups.CadastroCozinhaId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -25,13 +25,13 @@ public class Cozinha {
 
  @Id 
  @GeneratedValue(strategy = GenerationType.IDENTITY)
- @NotNull(groups = Groups.CadastroCidadeId.class)
+ @NotNull(groups = Groups.CadastroCozinhaId.class)
  private Long id;
  
  @Column(length = 100)
  @NotBlank
  private String nome;
- @JsonIgnore
+ 
  @OneToMany(mappedBy = "cozinha")
  private List<Restaurante> restaurantes=new ArrayList<>();
 
