@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.io.creators;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,10 @@ public class CidadeResCreator {
 	 return this.mapper.map(cidade, CidadeRes.class);
 	 
  }
- public List<CozinhaRes> toListModelRes(List<Cozinha> cozinhas){
+ public List<CidadeRes> toListModelRes(List<Cidade> cidades){
 	 
-	 var cozinhasRes=cozinhas.stream().map(c->mapper.map(c, CozinhaRes.class))
-			                         .toList();
-	 return cozinhasRes; 
+	 var cidadesRes=cidades.stream().map(c->toModelRes(c)).collect(Collectors.toList());
+	 return cidadesRes; 
 	 }
 	
 }

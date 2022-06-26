@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.io.creators;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class EstadoResCreator {
  }
  public List<EstadoRes> toListModelRes(List<Estado> estados){
 	 
-	 var estadosRes=estados.stream().map(e->mapper.map(e, EstadoRes.class))
-			                         .toList();
+	 var estadosRes=estados.stream().map(e->toModelRes(e))
+			                         .collect(Collectors.toList());
 	 return estadosRes; 
 	 }
 	
