@@ -67,7 +67,7 @@ public class RestauranteController {
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long id) {
 		this.cadastroRestaurante.excluir(id);
-		;
+		
 
 	}
 
@@ -82,6 +82,18 @@ public class RestauranteController {
 		} catch (CozinhaNaoEncotradaException ex) {
 			throw new NegocioException(ex.getMessage(), ex);
 		}
+	}
+	
+	@PutMapping("/{id}/ativar")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void ativar(@PathVariable Long id) {
+		this.cadastroRestaurante.ativar(id);
+	}
+	
+	@DeleteMapping("/{id}/inativar")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void inativar(@PathVariable Long id ) {
+		this.cadastroRestaurante.inativar(id);
 	}
 
 

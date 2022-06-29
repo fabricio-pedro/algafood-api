@@ -52,6 +52,8 @@ public class Restaurante {
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
     
+	@Column
+	private boolean ativo=true;
 	
 	@UpdateTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
@@ -77,10 +79,18 @@ public class Restaurante {
 
 	
 	  @ManyToMany
-	  @JoinTable(name = "restaurante_forma_pagamento", 
-	  joinColumns= @JoinColumn(name="restaurante_id"), 
-	  inverseJoinColumns = @JoinColumn(name="forma_pagamento_id")) 
-	  private List<FormaPagamento>  formasPagamentos;
+      @JoinTable(name = "restaurante_forma_pagamento", 
+	   joinColumns= @JoinColumn(name="restaurante_id"), 
+	   inverseJoinColumns = @JoinColumn(name="forma_pagamento_id")) 
+    private List<FormaPagamento>  formasPagamentos;
 	
+	  
+	  
+   public void ativar() {
+		setAtivo(true);
+	}
+   public void inativar() {
+		setAtivo(false);
+   }	 
 
 }

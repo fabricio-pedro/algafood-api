@@ -58,4 +58,19 @@ public class CadastroRestauranteService {
 		Restaurante restaurante=restauranteOp.orElseThrow(()->  new RestauranteNaoEncontradoException(restauranteId));
         return restaurante;		
 	}
+	
+	@Transactional
+	public void ativar(Long id) {
+	 var restauranteAtual=buscar(id);
+	 restauranteAtual.ativar();
+	 
+	 
+	}
+	@Transactional
+	public void inativar(Long id) {
+	 var restauranteAtual=buscar(id);
+	 restauranteAtual.inativar();
+	 
+	 
+	}
 }
