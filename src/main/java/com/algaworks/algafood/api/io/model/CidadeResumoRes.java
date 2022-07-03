@@ -7,14 +7,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RestauranteModelRes {
+public class CidadeResumoRes {
 	
 	private Long id;
 	private String nome;
-	private BigDecimal taxaFrete;
-	private CozinhaRes cozinha;
-	private boolean ativo;
-	private EnderencoModelRes endereco;
+	private String estado;
+	
 	
 
 	

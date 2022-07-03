@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.algaworks.algafood.api.io.model.RestauranteReq;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.model.Endereco;
 import com.algaworks.algafood.domain.model.Restaurante;
 
 @Component
@@ -19,6 +20,9 @@ public class RestauranteModelCreator {
     }
     public void copyToDomainObject(RestauranteReq restauranteReq,Restaurante restaurante) {
     	 restaurante.setCozinha(new Cozinha());
+    	 if(restaurante.getEndereco()!=null) {
+    		 restaurante.setEndereco(new Endereco());
+    	 }
     	 this.mapper.map(restauranteReq, restaurante);
     }
     

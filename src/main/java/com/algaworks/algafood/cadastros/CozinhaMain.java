@@ -4,14 +4,14 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 
-import com.algaworks.algafood.AlgafoodExample2Application;
+import com.algaworks.algafood.AlgaFoodApp;
 import com.algaworks.algafood.domain.model.Cozinha;
 
 public class CozinhaMain {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ApplicationContext context=(ApplicationContext) new SpringApplicationBuilder(AlgafoodExample2Application.class)
+		ApplicationContext context=(ApplicationContext) new SpringApplicationBuilder(AlgaFoodApp.class)
 				.web(WebApplicationType.NONE)
 				.run(args);
 		CozinhaCrud crud=context.getBean(CozinhaCrud.class);

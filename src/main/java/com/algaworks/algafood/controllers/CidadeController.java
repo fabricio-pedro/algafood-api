@@ -72,8 +72,8 @@ public class CidadeController {
 		 var cidadeAtual=this.cidadeService.buscar(id);
 		try {
 	          this.cidadeModelCreator.copyToDomainObject(cidadeReq,cidadeAtual);	 
-		 var cidadeAtualizada=this.cidadeService.salvar(cidadeAtual);
-		 return this.cidadeResCreator.toModelRes(cidadeAtualizada);
+		      var cidadeAtualizada=this.cidadeService.salvar(cidadeAtual);
+		      return this.cidadeResCreator.toModelRes(cidadeAtualizada);
 		}catch(EstadoNaoEncontradoException ex){
 			throw new NegocioException(ex.getMessage(),ex);
 			

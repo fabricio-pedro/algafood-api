@@ -8,12 +8,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.algaworks.algafood.domain.exceptions.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exceptions.CozinhaNaoEncotradaException;
 import com.algaworks.algafood.domain.exceptions.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exceptions.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exceptions.RestauranteNaoEncontradoException;
+import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
+import com.algaworks.algafood.domain.repositories.CidadeRepository;
 import com.algaworks.algafood.domain.repositories.CozinhaRepository;
 import com.algaworks.algafood.domain.repositories.RestauranteRepository;
 
@@ -22,18 +24,23 @@ public class CadastroRestauranteService {
 
 	private final RestauranteRepository restauranteRepository;
 	private final CozinhaRepository cozinhaRepository;
-
-	public CadastroRestauranteService(RestauranteRepository restauranteRepository,CozinhaRepository cozinhaRepository) {
+    private final CidadeRepository cidadeRepository;
+	public CadastroRestauranteService(RestauranteRepository restauranteRepository,CozinhaRepository cozinhaRepository, CidadeRepository cidadeRep) {
 		this.restauranteRepository=restauranteRepository;
 		this.cozinhaRepository=cozinhaRepository;
+		this.cidadeRepository=cidadeRep;
 	}
 	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
-		var cozinhaId=restaurante.getCozinha().getId();
+		 var cozinhaId=restaurante.getCozinha().getId();
+		 var cidadeId=restaurante.getEndereco().getCidade().getId();
+		 Optional<Cidade> cidadeOpt=this.cidadeRepository.findById(cidadeId);
 		 Optional<Cozinha> cozinhaOpt=this.cozinhaRepository.findById(cozinhaId);
-		 Cozinha cozinha =cozinhaOpt.orElseThrow(()-> new CozinhaNaoEncotradaException(cozinhaId));
+		 var cozinha =cozinhaOpt.orElseThrow(()-> new CozinhaNaoEncotradaException(cozinhaId));
+		 var cidade=cidadeOpt.orElseThrow(()->new CidadeNaoEncontradaException(cidadeId));
 		 restaurante.setCozinha(cozinha);
+		 restaurante.getEndereco().setCidade(cidade);
 		 return this.restauranteRepository.save(restaurante);
 	}
 	

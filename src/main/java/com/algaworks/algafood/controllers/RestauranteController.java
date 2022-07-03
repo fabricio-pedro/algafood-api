@@ -21,6 +21,7 @@ import com.algaworks.algafood.api.io.creators.RestauranteModelCreator;
 import com.algaworks.algafood.api.io.creators.RestauranteResCreator;
 import com.algaworks.algafood.api.io.model.RestauranteModelRes;
 import com.algaworks.algafood.api.io.model.RestauranteReq;
+import com.algaworks.algafood.domain.exceptions.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exceptions.CozinhaNaoEncotradaException;
 import com.algaworks.algafood.domain.exceptions.NegocioException;
 import com.algaworks.algafood.domain.services.CadastroRestauranteService;
@@ -58,7 +59,7 @@ public class RestauranteController {
 			var restaurante = restauranteModelCreator.toModelObject(restauranteReq);
 			var restauranteNovo = this.cadastroRestaurante.salvar(restaurante);
 			return this.restauranteResCreator.toModelRes(restauranteNovo);
-		} catch (CozinhaNaoEncotradaException ex) {
+		} catch (CozinhaNaoEncotradaException | CidadeNaoEncontradaException ex) {
 			throw new NegocioException(ex.getMessage());
 		}
 	}
@@ -79,7 +80,7 @@ public class RestauranteController {
 			this.restauranteModelCreator.copyToDomainObject(restauranteNovo, restauranteAtual);
 			var restauranteAtualizado = this.cadastroRestaurante.salvar(restauranteAtual);
 			return this.restauranteResCreator.toModelRes(restauranteAtualizado);
-		} catch (CozinhaNaoEncotradaException ex) {
+		} catch (CozinhaNaoEncotradaException | CidadeNaoEncontradaException ex) {
 			throw new NegocioException(ex.getMessage(), ex);
 		}
 	}

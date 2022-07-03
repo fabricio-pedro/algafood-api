@@ -2,7 +2,6 @@ package com.algaworks.algafood.domain.services;
 
 import java.util.List;
 
-import org.springframework.aop.ThrowsAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
