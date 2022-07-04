@@ -55,7 +55,7 @@ public class CozinhaController {
 	}
 	
 	
-	@Transactional
+
 	@PostMapping
     public ResponseEntity<CozinhaRes> adicionar(@RequestBody @Valid CozinhaReq cozinhaReq){
 		var cozinha=this.cozinhaCreator.toModelObject(cozinhaReq);
@@ -66,7 +66,7 @@ public class CozinhaController {
 		return ResponseEntity.created(uri).body(cozinhaResCreator.toModelRes(novaCozinha));
 
    }
-	@Transactional
+	
 	@PutMapping("/{id}")
 	public CozinhaRes alterar(@PathVariable Long id,@RequestBody CozinhaReq cozinhaReq){
 		 Cozinha cozinhaAtualizada=this.cadastroCozinha.buscar(id);

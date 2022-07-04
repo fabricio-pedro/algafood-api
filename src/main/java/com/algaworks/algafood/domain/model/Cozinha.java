@@ -10,12 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.algaworks.algafood.core.validations.Groups;
-import com.algaworks.algafood.core.validations.Groups.CadastroCozinhaId;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
