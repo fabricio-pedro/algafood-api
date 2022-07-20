@@ -154,6 +154,9 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
             ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;
             String details="Um ou mais campos estão invalidos.Faça o preenchimento e tente novamente";
             BindingResult bindingResult=ex.getBindingResult();
+            
+            bindingResult.getFieldErrors().stream().forEach(x->System.out.println(x.getField()));
+            
             List<ProblemDetails.Field> problemFields = bindingResult.getFieldErrors().stream()
     	    		.map(fieldError -> {
     	    			String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
@@ -165,6 +168,7 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
     	    		})
     	    		.collect(Collectors.toList());
     	    
+           problemFields.stream().forEach(x->System.out.println(x.getName()));
             
             ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
             		                .timestamp(OffsetDateTime.now())

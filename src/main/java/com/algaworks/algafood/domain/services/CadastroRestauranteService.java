@@ -3,6 +3,7 @@ package com.algaworks.algafood.domain.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,15 +22,14 @@ import com.algaworks.algafood.domain.repositories.RestauranteRepository;
 
 @Service
 public class CadastroRestauranteService {
-
-	private final RestauranteRepository restauranteRepository;
-	private final CozinhaRepository cozinhaRepository;
-    private final CidadeRepository cidadeRepository;
-	public CadastroRestauranteService(RestauranteRepository restauranteRepository,CozinhaRepository cozinhaRepository, CidadeRepository cidadeRep) {
-		this.restauranteRepository=restauranteRepository;
-		this.cozinhaRepository=cozinhaRepository;
-		this.cidadeRepository=cidadeRep;
-	}
+    @Autowired
+	private  RestauranteRepository restauranteRepository;
+    @Autowired
+    private  CozinhaRepository cozinhaRepository;
+    @Autowired
+    private  CidadeRepository cidadeRepository;
+    @Autowired
+    private  CadastroFormaPagamentoService formaPagamentoService;
 	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
@@ -80,4 +80,35 @@ public class CadastroRestauranteService {
 	 
 	 
 	}
+	@Transactional
+	public void abrir(Long id) {
+	 var restauranteAtual=buscar(id);
+	 restauranteAtual.abrir();
+	 
+	 
+	}
+	@Transactional
+	public void fechar(Long id) {
+	 var restauranteAtual=buscar(id);
+	 restauranteAtual.fechar();
+	 
+	 
+	}
+	
+
+	
+	
+	@Transactional
+	public void associarFormaPagamento(Long restaurenteId, Long id) {
+	   var restaurante =this.buscar(restaurenteId);
+	   var formaPagamento=this.formaPagamentoService.buscarPor(id);
+	   restaurante.addicionarFormaPagamento(formaPagamento);
+	}
+	
+	@Transactional
+	public void desassociarFormaPagamento(Long restaurenteId, Long id) {
+		   var restaurante =this.buscar(restaurenteId);
+		   var formaPagamento=this.formaPagamentoService.buscarPor(id);
+		   restaurante.removerFormaPagamento(formaPagamento);
+		}
 }

@@ -19,7 +19,8 @@ public class RestauranteModelCreator {
     	return this.mapper.map(restauranteReq, Restaurante.class);
     }
     public void copyToDomainObject(RestauranteReq restauranteReq,Restaurante restaurante) {
-    	 restaurante.setCozinha(new Cozinha());
+    	 
+    	restaurante.setCozinha(new Cozinha());
     	 if(restaurante.getEndereco()!=null) {
     		 restaurante.setEndereco(new Endereco());
     	 }

@@ -1,4 +1,4 @@
-package com.algaworks.algafood.controllers;
+package com.algaworks.algafood.api.controllers;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import com.algaworks.algafood.domain.exceptions.NegocioException;
 import com.algaworks.algafood.domain.services.CadastroRestauranteService;
 
 @RestController
-@RequestMapping("restaurantes")
+@RequestMapping("/restaurantes")
 public class RestauranteController {
 
 	@Autowired
@@ -96,6 +96,20 @@ public class RestauranteController {
 	public void inativar(@PathVariable Long id ) {
 		this.cadastroRestaurante.inativar(id);
 	}
+	
+	@PutMapping("/{id}/abertura")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void abrir(@PathVariable Long id) {
+		this.cadastroRestaurante.abrir(id);
+	}
+	
+	@PutMapping("/{id}/fechamento")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void fechar(@PathVariable Long id ) {
+		this.cadastroRestaurante.fechar(id);
+	}
+	
+	
 
 
 	 

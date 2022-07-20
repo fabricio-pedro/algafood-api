@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -29,7 +30,7 @@ public class Grupo {
     		joinColumns = @JoinColumn(name="grupo_id"),
     		inverseJoinColumns = @JoinColumn(name="permissao_id")
     		)
-    private List<Permissao> permissoes;
+    private List<Permissao> permissoes=new ArrayList<>();
 	
 	
 }

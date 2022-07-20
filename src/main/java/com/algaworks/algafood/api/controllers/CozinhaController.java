@@ -1,4 +1,4 @@
-package com.algaworks.algafood.controllers;
+package com.algaworks.algafood.api.controllers;
 
 import java.net.URI;
 import java.util.List;
