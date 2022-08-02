@@ -49,6 +49,7 @@ public class CadastroGrupoService {
 	}
   }
  
+ 
  public List<Grupo> listar(){
 	 return this.grupoRep.findAll();
  }
