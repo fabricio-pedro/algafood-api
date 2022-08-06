@@ -21,6 +21,9 @@ public class CadastroUsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRep;
 	
+	@Autowired
+	private CadastroGrupoService grupoService;
+	
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
        this.usuarioRep.detach(usuario);
@@ -65,7 +68,19 @@ public class CadastroUsuarioService {
 			 throw new NegocioException("A senha atual informada não coincide com a senha cadastrada");
 		 }
 		 usuario.setSenha(novaSenha);
-	  }	 
-	
+	  }	
+	 
+	 @Transactional
+	 public void associarGrupo(Long userId, Long grupoId) {
+		 var usuarioEncontrado=this.buscar(userId);
+		 var grupoEncontrado=this.grupoService.buscar(grupoId);
+		 usuarioEncontrado.adicionarGrupo(grupoEncontrado);
+	 }
+	 @Transactional
+	 public void desassociarGrupo(Long userId, Long grupoId) {
+		 var usuarioEncontrado=this.buscar(userId);
+		 var grupoEncontrado=this.grupoService.buscar(grupoId);
+		 usuarioEncontrado.removerGrupo(grupoEncontrado);
+	 }
 	
 }

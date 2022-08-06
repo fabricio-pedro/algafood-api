@@ -19,10 +19,12 @@ public class CadastroGrupoService {
  
  private static final String ENTIDADE_EM_USO="Grupo com código %s esta em uso e não pode ser removido";
  
+ private final CadastroPermissaoService permissaoService;
  
- public CadastroGrupoService(GrupoRepository grupoRep) {
+ public CadastroGrupoService(GrupoRepository grupoRep, CadastroPermissaoService permissaoService) {
 	super();
 	this.grupoRep = grupoRep;
+	this.permissaoService=permissaoService;
  }	
  
  @Transactional
@@ -53,5 +55,21 @@ public class CadastroGrupoService {
  public List<Grupo> listar(){
 	 return this.grupoRep.findAll();
  }
+ 
+ @Transactional
+ public void associarPermissao(Long grupoId, Long permissaoId) {
+	 var grupoEncontrado=this.buscar(grupoId);
+	 var permissaoEncontrada=this.permissaoService.buscar(permissaoId);
+	 grupoEncontrado.adicionarPermissao(permissaoEncontrada);
+	 
+ }
+ @Transactional
+ public void dessociarPermissao(Long grupoId, Long permissaoId) {
+	 var grupoEncontrado=this.buscar(grupoId);
+	 var permissaoEncontrada=this.permissaoService.buscar(permissaoId);
+	 grupoEncontrado.removerPermissao(permissaoEncontrada);
+	 
+ }
+ 
  
 }
