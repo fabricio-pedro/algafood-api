@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exceptions.ProdutoNaoEncotradoException;
 import com.algaworks.algafood.domain.model.Produto;
+import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repositories.ProdutoRepository;
 
 @Service
 public class CadastroProdutoService {
 
-	private static final String ENTIDADE_EM_USO = "Produto com código %s nao pode ser removido pois esta em uso";
 	private final ProdutoRepository ProdutoRepository;
 
 	public CadastroProdutoService(ProdutoRepository ProdutoRepository) {
@@ -21,6 +21,14 @@ public class CadastroProdutoService {
 	
 	public List<Produto> listar(){
 		return this.ProdutoRepository.findAll();
+	}
+	
+	public List<Produto> listarPorStatus(Restaurante res){
+		return this.ProdutoRepository.findProdutosAtivosByRestaurante(res);
+	}
+	
+	public List<Produto> listarDe(Restaurante res){
+		return this.ProdutoRepository.findTodosByRestaurante(res);
 	}
 	
 	@Transactional

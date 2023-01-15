@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class EnderencoModelRes {
+public class EnderecoModelRes {
 
 	private String cep;
 	

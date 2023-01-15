@@ -24,6 +24,8 @@ public class CadastroUsuarioService {
 	@Autowired
 	private CadastroGrupoService grupoService;
 	
+	
+	
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
        this.usuarioRep.detach(usuario);
@@ -82,5 +84,6 @@ public class CadastroUsuarioService {
 		 var grupoEncontrado=this.grupoService.buscar(grupoId);
 		 usuarioEncontrado.removerGrupo(grupoEncontrado);
 	 }
+	 
 	
 }

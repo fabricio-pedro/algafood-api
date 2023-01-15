@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -11,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.api.io.creators.ProdutoModelCreator;
 import com.algaworks.algafood.api.io.creators.ProdutoResCreator;
 import com.algaworks.algafood.api.io.model.ProdutoReq;
 import com.algaworks.algafood.api.io.model.ProdutoRes;
+import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.services.CadastroProdutoService;
 import com.algaworks.algafood.domain.services.CadastroRestauranteService;
 
@@ -46,9 +49,16 @@ public class RestauranteProdutoController {
 	}
  	
     @GetMapping
-    public List<ProdutoRes> listar(@PathVariable Long restauranteId){
-    	var produtosDoRestaurante=this.restauranteService.buscar(restauranteId).getProdutos();
-    	var produtosRes=this.produtoResCreator.toListModelRes(produtosDoRestaurante);
+    public List<ProdutoRes> listar(@PathVariable Long restauranteId, @RequestParam(required = false,name = "incluirInativos") boolean incluirInativos){
+    	List<Produto> produtos=new ArrayList<>();
+    	var restaurante=this.restauranteService.buscar(restauranteId);
+    	if(incluirInativos) {
+    	   produtos=this.produtoService.listarDe(restaurante);
+    	   System.out.println("Valor de inativos"+incluirInativos);
+    	}else{
+    	produtos=this.produtoService.listarPorStatus(restaurante);
+        }
+    	var produtosRes=this.produtoResCreator.toListModelRes(produtos);
         return produtosRes;
     }
    

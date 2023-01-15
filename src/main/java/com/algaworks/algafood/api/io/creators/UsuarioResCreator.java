@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.io.creators;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class UsuarioResCreator {
 	 return this.mapper.map(Usuario, UsuarioRes.class);
 	 
  }
- public List<UsuarioRes> toListModelRes(List<Usuario> Usuarios){
+ public List<UsuarioRes> toListModelRes(Collection<Usuario> Usuarios){
 	 
 	 var UsuariosRes=Usuarios.stream().map(u->toModelRes(u))
 			                          .collect(Collectors.toList());

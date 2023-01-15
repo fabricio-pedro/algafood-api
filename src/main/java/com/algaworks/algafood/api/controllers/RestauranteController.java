@@ -24,6 +24,7 @@ import com.algaworks.algafood.api.io.model.RestauranteReq;
 import com.algaworks.algafood.domain.exceptions.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exceptions.CozinhaNaoEncotradaException;
 import com.algaworks.algafood.domain.exceptions.NegocioException;
+import com.algaworks.algafood.domain.exceptions.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.services.CadastroRestauranteService;
 
 @RestController
@@ -90,7 +91,22 @@ public class RestauranteController {
 	public void ativar(@PathVariable Long id) {
 		this.cadastroRestaurante.ativar(id);
 	}
-	
+   @PutMapping("/ativacoes")	
+   public void ativarRestaurantes(@RequestBody List<Long> ids) {
+	   try {
+	     ids.forEach(this::ativar);
+	   }catch(RestauranteNaoEncontradoException ex) {
+		 throw new NegocioException(ex.getMessage());
+	   }
+   }
+   @DeleteMapping("/ativacoes")	
+   public void inativarRestaurantes(@RequestBody List<Long> ids) {
+	   try {
+	     ids.forEach(this::inativar);
+	   }catch(RestauranteNaoEncontradoException ex) {
+		 throw new NegocioException(ex.getMessage());
+	   }
+   }
 	@DeleteMapping("/{id}/inativar")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void inativar(@PathVariable Long id ) {

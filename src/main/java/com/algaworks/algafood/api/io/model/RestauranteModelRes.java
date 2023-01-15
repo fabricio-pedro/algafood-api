@@ -14,7 +14,7 @@ public class RestauranteModelRes {
 	private BigDecimal taxaFrete;
 	private CozinhaRes cozinha;
 	private boolean ativo;
-	private EnderencoModelRes endereco;
+	private EnderecoModelRes endereco;
 	private boolean aberto;
 	
 

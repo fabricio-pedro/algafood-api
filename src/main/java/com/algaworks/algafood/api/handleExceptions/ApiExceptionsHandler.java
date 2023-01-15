@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -148,36 +149,44 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
 	 
 		return handleExceptionInternal(ex, problems,headers, status, request);
 	}
+ @Override
+ protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
+	 
+ }
  
  protected ResponseEntity<Object> handleMethodArgumentNotValid(
 			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-            ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;
-            String details="Um ou mais campos estão invalidos.Faça o preenchimento e tente novamente";
-            BindingResult bindingResult=ex.getBindingResult();
-            
-            bindingResult.getFieldErrors().stream().forEach(x->System.out.println(x.getField()));
-            
-            List<ProblemDetails.Field> problemFields = bindingResult.getFieldErrors().stream()
-    	    		.map(fieldError -> {
-    	    			String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-    	    			System.out.println("messagem:"+message);
-    	    			return ProblemDetails.Field.builder()
-    	    				.name(fieldError.getField())
-    	    				.errorInField(message)
-    	    				.build();
-    	    		})
-    	    		.collect(Collectors.toList());
-    	    
-           problemFields.stream().forEach(x->System.out.println(x.getName()));
-            
-            ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
-            		                .timestamp(OffsetDateTime.now())
-                                    .userMessage(details)
-                                    .fields(problemFields)
-            		                .build();
-            		
-		return handleExceptionInternal(ex, problems, headers, status, request);
-	} 
+            return handleValidationInternal(ex, headers, status, request,ex.getBindingResult());
+	}
+private ResponseEntity<Object> handleValidationInternal(Exception ex, HttpHeaders headers,
+	HttpStatus status, WebRequest request, BindingResult bindingResult) {
+	ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;
+	String details="Um ou mais campos estão invalidos.Faça o preenchimento e tente novamente";
+	
+	bindingResult.getFieldErrors().stream().forEach(x->System.out.println(x.getField()));
+	
+	List<ProblemDetails.Field> problemFields = bindingResult.getFieldErrors().stream()
+			.map(fieldError -> {
+				String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+				System.out.println("messagem:"+message);
+				return ProblemDetails.Field.builder()
+					.name(fieldError.getField())
+					.errorInField(message)
+					.build();
+			})
+			.collect(Collectors.toList());
+	
+         problemFields.stream().forEach(x->System.out.println(x.getName()));
+	
+	ProblemDetails problems=createProblemDetailsBuilder(status.value(), details, typeOfProblem)
+			                .timestamp(OffsetDateTime.now())
+	                        .userMessage(details)
+	                        .fields(problemFields)
+			                .build();
+			
+return handleExceptionInternal(ex, problems, headers, status, request);
+} 
  
 	
 private ResponseEntity<Object> handleInvalidFormat(InvalidFormatException ex,

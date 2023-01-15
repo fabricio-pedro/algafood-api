@@ -7,6 +7,11 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +29,7 @@ import com.algaworks.algafood.api.io.creators.CozinhaResCreator;
 import com.algaworks.algafood.api.io.model.CozinhaReq;
 import com.algaworks.algafood.api.io.model.CozinhaRes;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.repositories.CozinhaRepository;
 import com.algaworks.algafood.domain.services.CadastroCozinhaService;
 
 @RestController
@@ -40,10 +46,15 @@ public class CozinhaController {
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
 	
+	@Autowired
+	private CozinhaRepository cozinhaRepository;
+	
 	@GetMapping
-	public List<CozinhaRes> listar(){
-		
-		return  this.cozinhaResCreator.toListModelRes(this.cadastroCozinha.listar());
+	public Page<CozinhaRes> listar(@PageableDefault(size = 2) Pageable pageable){
+		Page<Cozinha> cozinhasPage=  this.cozinhaRepository.findAll(pageable);
+		var cozinhasModel=this.cozinhaResCreator.toListModelRes(cozinhasPage.getContent());
+		Page<CozinhaRes> cozinhaResPage=new PageImpl<>(cozinhasModel,pageable,cozinhasPage.getTotalElements());
+		return  cozinhaResPage;
 	}
 	
 

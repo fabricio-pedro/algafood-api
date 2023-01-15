@@ -1,19 +1,28 @@
 package com.algaworks.algafood.domain.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum StatusPedido {
 	
-	CRIADO("criado"),
-	CONFIRMADO("confirmado"),
-	ENTREGUE("entregue"),
-	CANCELADO("cancelado");
+	CRIADO("Criado"),
+	CONFIRMADO("Confirmado", CRIADO),
+	ENTREGUE("Entregue", CONFIRMADO),
+	CANCELADO("Cancelado", CRIADO);
 	
-	private String status;
-	private StatusPedido(String status) {
-		this.status=status;
+	private String descricao;
+	private List<StatusPedido> statusAnteriores;
+	
+	StatusPedido(String descricao, StatusPedido... statusAnteriores) {
+		this.descricao = descricao;
+		this.statusAnteriores = Arrays.asList(statusAnteriores);
 	}
-
-	public String getStatus() {
-		return this.status;
-		
+	
+	public String getDescricao() {
+		return this.descricao;
+	}
+	
+	public boolean naoPodeAlterarPara(StatusPedido novoStatus) {
+		return !novoStatus.statusAnteriores.contains(this);
 	}
 }
