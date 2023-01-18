@@ -4,13 +4,13 @@ package com.algaworks.algafood.configurations;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.algaworks.algafood.api.io.model.EnderecoModelRes;
 import com.algaworks.algafood.api.io.model.ItemPedidoReq;
-import com.algaworks.algafood.api.io.model.ProdutoReq;
 import com.algaworks.algafood.domain.model.Endereco;
 import com.algaworks.algafood.domain.model.ItemPedido;
-import com.algaworks.algafood.domain.model.Produto;
 
 @Configuration
 public class CustomConfig {
@@ -31,5 +31,6 @@ public class CustomConfig {
 	     
 	  return mapper;
  }
+
 	
 }

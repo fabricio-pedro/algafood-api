@@ -19,6 +19,7 @@ import com.algaworks.algafood.api.io.model.FotoProdutoReq;
 import com.algaworks.algafood.api.io.model.FotoProdutoRes;
 import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.services.CadastroProdutoService;
+import com.algaworks.algafood.domain.services.CatalogoFotoProdutoService;
 
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
@@ -29,20 +30,24 @@ public class RestauranteProdutoFotoController {
 	
 	@Autowired
 	private CadastroProdutoService cadProdutoService;
+	 
+	@Autowired
+	private CatalogoFotoProdutoService catalogoFotoProdutoService;
 	
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoProdutoRes atualizarFoto(@PathVariable Long restauranteId,@PathVariable Long produtoId, 
 			              @Valid  FotoProdutoReq fotoReq ) {
 	     var arquivo=fotoReq.getArquivo();
 		 var produto =cadProdutoService.buscar(restauranteId, produtoId);
+		
 		 var foto=new FotoProduto();
 		 foto.setProduto(produto);
 		 foto.setDescricao(fotoReq.getDescricao());
 		 foto.setContentType(arquivo.getContentType());
 		 foto.setTamanho(arquivo.getSize());
 		 foto.setNomeArquivo(arquivo.getOriginalFilename());
-		 
-		 return fotoProdutoResCreator.toModelRes(foto);
+		 var fotoSalva= this.catalogoFotoProdutoService.salvar(foto);
+		 return fotoProdutoResCreator.toModelRes(fotoSalva);
 		
 	}
 	

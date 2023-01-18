@@ -18,9 +18,11 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -159,6 +161,15 @@ protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotRead
 			MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
             return handleValidationInternal(ex, headers, status, request,ex.getBindingResult());
 	}
+ 
+ @ExceptionHandler(MaxUploadSizeExceededException.class)
+ @ResponseStatus
+ public String handleFileSizeLimitExceeded(MaxUploadSizeExceededException exc) {
+      var size= exc.getMaxUploadSize();                                                                              
+	 return "{\"error\":\"file too big\"}";
+ }
+ 
+ 
 private ResponseEntity<Object> handleValidationInternal(Exception ex, HttpHeaders headers,
 	HttpStatus status, WebRequest request, BindingResult bindingResult) {
 	ProblemType typeOfProblem=ProblemType.DADOS_INVALIDOS;

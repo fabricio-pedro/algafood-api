@@ -24,7 +24,7 @@ public class CadastroProdutoService {
 	}
 	
 	public List<Produto> listarPorStatus(Restaurante res){
-		return this.ProdutoRepository.findProdutosAtivosByRestaurante(res);
+		return this.ProdutoRepository.findTodosByRestaurante(res);
 	}
 	
 	public List<Produto> listarDe(Restaurante res){
@@ -40,7 +40,7 @@ public class CadastroProdutoService {
 	
  
 	public Produto buscar(Long restauranteId,Long produtoId) {
-	  var produtoOpt=this.ProdutoRepository.findByProdutoIdAndRestauranteId(produtoId, restauranteId);
+	  var produtoOpt=this.ProdutoRepository.findById( produtoId, restauranteId);
 	   return produtoOpt.orElseThrow(()->new ProdutoNaoEncotradoException(restauranteId, produtoId));
 	}
 	

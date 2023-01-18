@@ -1,5 +1,7 @@
 package com.algaworks.algafood.infrastructure.repository;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -10,8 +12,12 @@ import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.repositories.ProdutoRepository;
 import com.algaworks.algafood.domain.repositories.ProdutoRepositoryQueries;
 
+/**
+ * @author fabricio
+ *
+ */
 @Repository
-public class ProdutoRepositoryImp implements ProdutoRepositoryQueries {
+public class ProdutoRepositoryImpl implements ProdutoRepositoryQueries {
 	@PersistenceContext
 	private EntityManager manager;
     
@@ -21,4 +27,15 @@ public class ProdutoRepositoryImp implements ProdutoRepositoryQueries {
 		// TODO Auto-generated method stub
 		return manager.merge(foto);
 	}
+
+	@Transactional
+	@Override
+	public void delete(FotoProduto foto) {
+		// TODO Auto-generated method stub
+	 	this.manager.remove(foto);
+	}
+
+	
+
+	
 }
