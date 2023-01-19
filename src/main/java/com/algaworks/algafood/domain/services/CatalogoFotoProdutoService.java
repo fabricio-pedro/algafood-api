@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.services;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.repositories.ProdutoRepository;
+import com.algaworks.algafood.domain.services.FotoStorageService.NovaFoto;
+
 
 @Service
 public class CatalogoFotoProdutoService {
@@ -16,17 +19,29 @@ public class CatalogoFotoProdutoService {
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
+	@Autowired
+	private FotoStorageService fotoStorageService;
+	
 	@Transactional
-	public FotoProduto salvar(FotoProduto fotoProduto) {
+	public FotoProduto salvar(FotoProduto fotoProduto,InputStream dadosFoto) {
 		 var restauranteId=fotoProduto.getRestauranteId();
 		 var produtoId=fotoProduto.getProduto().getId();
 		 Optional<FotoProduto> fotoExiste=this.produtoRepository.findFotoById(restauranteId, produtoId);
 			
-			  if(fotoExiste.isPresent()) { this.produtoRepository.delete(fotoExiste.get());
+			  if(fotoExiste.isPresent()) { 
+				  this.produtoRepository.delete(fotoExiste.get());
 			  
 			  }
+			 var nomeNovoArquivo=this.fotoStorageService.gerarNomeArquivo(fotoProduto.getNomeArquivo()); 
+		     var  fotoSalva=this.produtoRepository.save(fotoProduto);
+		     this.produtoRepository.flush();
+			 NovaFoto novaFoto=NovaFoto.builder().
+					           nome(nomeNovoArquivo).
+					           inputStream(dadosFoto).
+					           build();
 			 
-		return this.produtoRepository.save(fotoProduto);
+	    this.fotoStorageService.armazenar(novaFoto);		 
+		return fotoSalva;
 	}
 	
 }

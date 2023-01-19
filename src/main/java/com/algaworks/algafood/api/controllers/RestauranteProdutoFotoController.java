@@ -2,6 +2,7 @@ package com.algaworks.algafood.api.controllers;
 
 
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ public class RestauranteProdutoFotoController {
 	
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoProdutoRes atualizarFoto(@PathVariable Long restauranteId,@PathVariable Long produtoId, 
-			              @Valid  FotoProdutoReq fotoReq ) {
+			              @Valid  FotoProdutoReq fotoReq ) throws IOException {
 	     var arquivo=fotoReq.getArquivo();
 		 var produto =cadProdutoService.buscar(restauranteId, produtoId);
 		
@@ -46,7 +47,7 @@ public class RestauranteProdutoFotoController {
 		 foto.setContentType(arquivo.getContentType());
 		 foto.setTamanho(arquivo.getSize());
 		 foto.setNomeArquivo(arquivo.getOriginalFilename());
-		 var fotoSalva= this.catalogoFotoProdutoService.salvar(foto);
+		 var fotoSalva= this.catalogoFotoProdutoService.salvar(foto,arquivo.getInputStream());;
 		 return fotoProdutoResCreator.toModelRes(fotoSalva);
 		
 	}
