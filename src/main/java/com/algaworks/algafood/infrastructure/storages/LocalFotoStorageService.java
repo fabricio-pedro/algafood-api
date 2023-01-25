@@ -53,6 +53,7 @@ public class LocalFotoStorageService implements FotoStorageService {
 			
 				try {
 				   inputStream=Files.newInputStream(searchedFilePath);
+				   System.err.println("Teste simples");
 				   return inputStream;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
