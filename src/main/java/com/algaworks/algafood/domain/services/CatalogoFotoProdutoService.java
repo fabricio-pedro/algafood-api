@@ -50,6 +50,20 @@ public class CatalogoFotoProdutoService {
 	
 	public FotoProduto buscar(Long restauranteId, Long produtoId) {
 	
-		return this.produtoRepository.findFotoById(restauranteId, produtoId).orElseThrow(()-> new FotoNaoEncontradaException(restauranteId,produtoId));	}
+		return this.produtoRepository.findFotoById(restauranteId, produtoId)
+				                     .orElseThrow(()-> new FotoNaoEncontradaException(restauranteId,produtoId));
+	}
 	 
-}
+ @Transactional	
+ public void excluir(Long restauranteId, Long produtoId) {
+	var fotoProduto=buscar(restauranteId, produtoId);
+	this.produtoRepository.delete(fotoProduto);
+	this.produtoRepository.flush();
+	this.fotoStorageService.remover(fotoProduto.getNomeArquivo());
+ 
+ }
+	   
+
+
+
+  }
