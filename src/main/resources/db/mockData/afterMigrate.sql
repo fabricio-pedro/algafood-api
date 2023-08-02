@@ -60,9 +60,9 @@ insert into permissao (id, nome, descricao) values (1, 'CONSULTAR_COZINHAS', 'Pe
 insert into permissao (id, nome, descricao) values (2, 'EDITAR_COZINHAS', 'Permite editar cozinhas');
 insert into grupo_permissao (grupo_id, permissao_id) values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1); 
 
-insert into usuario (id,data_cadastro,email,nome,senha) values(1,utc_timestamp,'wolfxzero3@gmail.com','lucas','25asdfQazf');
-insert into usuario (id,data_cadastro,email,nome,senha) values(2,utc_timestamp,'wolfxzero3@gmail.com','Luiza','123456Qaz');
-insert into usuario (id,data_cadastro,email,nome,senha) values(3,utc_timestamp,'wolfxzero3@gmail.com','pedro','fabrdcr1234');
+insert into usuario (id,data_cadastro,email,nome,senha) values(1,utc_timestamp,'wolfxzero2@gmail.com','lucas','25asdfQazf');
+insert into usuario (id,data_cadastro,email,nome,senha) values(2,utc_timestamp,'wolfxzero2@gmail.com','Luiza','123456Qaz');
+insert into usuario (id,data_cadastro,email,nome,senha) values(3,utc_timestamp,'wolfxzero2@gmail.com','pedro','fabrdcr1234');
 insert into usuario_grupo (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
 
 insert into restaurante_responsavel(usuario_id,restaurante_id) values (1,1),(1,2),(2,1),(2,3),(3,2);

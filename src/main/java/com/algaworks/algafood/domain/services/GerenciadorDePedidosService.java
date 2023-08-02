@@ -11,7 +11,7 @@ import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.repositories.PedidoRepository;
 import com.algaworks.algafood.domain.repositories.filters.PedidoFilter;
 import com.algaworks.algafood.infrastructure.repository.spec.PedidoSpecs;
-import com.algaworks.algafood.domain.services.EnvioEmailService.Messagem;
+import com.algaworks.algafood.domain.services.EnvioEmailService.Mensagem;
 
 @Service
 public class GerenciadorDePedidosService {
@@ -29,11 +29,11 @@ public class GerenciadorDePedidosService {
 	public void confirmar(String codigo) {
 		var pedidoAConfirmar=this.emissorDePedidoService.buscar(codigo);
 		    pedidoAConfirmar.confirmar();
-		    var msg=Messagem.builder()
+		    var msg=Mensagem.builder()
 		    		.assunto(pedidoAConfirmar.getRestaurante().getNome() + " - Pedido confirmado")
-					.corpo("O pedido de código <strong>" 
-							+ pedidoAConfirmar.getCodigo() + "</strong> foi confirmado!")
+					.corpo("pedido-confirmado.html")
 					.destinario(pedidoAConfirmar.getCliente().getEmail())
+					.variavel("pedido",pedidoAConfirmar)
 					.build();
 		    this.emailService.enviar(msg);
 		    
